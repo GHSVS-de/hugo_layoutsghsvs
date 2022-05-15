@@ -1,0 +1,105 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+{{- if .Params.robots -}}
+	<meta name="robots" content="{{ .Params.robots }}">
+{{- else if (in site.Params.noindexSections .Section) -}}
+	<meta name="robots" content="noindex,nofollow">
+{{- end -}}
+
+<meta name="description" content="
+{{- .Page.Params.metadesc
+	| default .Page.Params.description
+	| default site.Params.description
+-}}">{{- /*  */ -}}
+
+<title>{{ if .IsHome }}{{ site.Title | $.Page.RenderString }} · {{ site.Params.description | $.Page.RenderString }}{{ else }}{{ .Title | $.Page.RenderString | plainify }}{{ with .Section }} · {{ . }}{{ end }} · {{ site.Title | $.Page.RenderString }}{{ end }}</title>
+<link rel="canonical" href="{{ .Permalink }}">
+
+{{- if .IsTranslated -}}
+	{{- range .AllTranslations -}}
+		<link rel="alternate" hreflang="{{ .Language.Lang }}" href="{{ .Permalink }}" title="{{ .Language.LanguageName }}">
+	{{- end -}}
+
+	{{- range first 1 .AllTranslations -}}
+		<link rel="alternate" hreflang="x-default" href="{{ .Permalink }}">
+	{{- end -}}
+{{- end -}}
+
+{{- /* SCSS: compile template main CSS and LINK it. */ -}}
+{{- partialCached "cssCompileTemplate.html" . -}}
+
+{{- /*
+SCSS: compile other CSS defined in KONFIGYML (filesToCompile)
+but do NOT LINK it here.
+*/ -}}
+{{- partialCached "cssFilesToCompile.html" . -}}
+
+{{- /*
+Concat optional CSS. Collected in .Scratch "SCRATCH_CSS" and LINK it.
+*/ -}}
+{{- block "scratch_css" . }}{{ end -}}
+
+{{- /* CSS defined via front-matter of current page and LINK it  */ -}}
+{{- block "extra_css" . }}{{ end -}}
+
+{{- if and site.Params.enabledRss (ne .Params.enabledRss false) -}}
+	{{- with .OutputFormats.Get "rss" -}}
+		{{ printf `<link rel="%s" type="%s" href="%s" title="%s">` .Rel .MediaType.Type .Permalink $.Site.Title | safeHTML }}
+	{{- end -}}
+{{- end -}}
+
+{{- /* See https://github.com/gohugoio/hugo/tree/master/tpl/tplimpl/embedded/templates */ -}}
+{{- if and site.Params.enabledOpengraph (ne .Params.enabledOpengraph false) -}}
+	{{- template "_internal/opengraph.html" . -}}
+{{- end -}}
+{{- if and site.Params.enabledTwitter (ne .Params.enabledTwitter false) -}}
+	{{- template "_internal/twitter_cards.html" . -}}
+{{- end -}}
+{{- if and site.Params.enabledSchema (ne .Params.enabledSchema false) -}}
+	{{- template "_internal/schema.html" . -}}
+{{- end -}}
+
+{{- if site.Params.enabledFavicons -}}
+	{{- partialCached "favicons.html" . -}}
+{{- end -}}
+
+
+{{- /* ###BLOCKS### */ -}}
+{{- define "scratch_css" -}}
+	{{/*
+	SIEHE OBEN DEN HINWEIS ZU $TOC!!
+	Beispiel /site/assets/venobox/.*.css.
+	Shortcode hat Zeile $.Page.Scratch.SetInMap "SCRATCH_CSS" "venobox" true.
+	Folgend fasst alle darin enthaltenen *.css zusammen.
+	Lädt dann online src="/assets/js/scratch_css/venobox.min.css".
+	*/}}
+	{{- range $folder,$dummy := $.Page.Scratch.Get "SCRATCH_CSS" -}}
+		{{- $SCRATCH_CSS := resources.Match (printf "%s/%s/%s" "css" $folder "*.css") -}}
+		{{- if $SCRATCH_CSS -}}
+			{{- $targetPath := printf "%s%s%s" "/assets/css/scratch_css/" $folder ".css" -}}
+			{{- $targetCSS := $SCRATCH_CSS
+				| resources.Concat $targetPath
+				| resources.Minify
+				| resources.Fingerprint "sha256" -}}
+			{{- partial "stylesheet.html" $targetCSS -}}
+		{{- end -}}
+	{{- end -}}
+{{- end -}}
+
+{{- define "extra_css" -}}
+	{{- range .Page.Params.extra_css -}}
+		{{- $file := . -}}
+		{{- $suffix := index (findRE "(\\.css)$" . 1) 0 -}}
+		{{- if not $suffix -}}
+			{{- $file = path.Join "/assets/css" $file -}}
+			{{ if eq hugo.Environment "production" -}}
+				{{- $suffix = ".min.css" -}}
+			{{ else -}}
+				{{- $suffix = ".css" -}}
+			{{- end -}}
+			{{- $file = print $file $suffix -}}
+		{{- end -}}
+		<link href="{{ $file }}" rel="stylesheet">
+	{{- end -}}
+{{- end -}}

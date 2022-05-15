@@ -1,0 +1,26 @@
+{{- $loc := (.Get "loc" | default "local") -}}
+{{- $path := "" -}}
+{{- $src := replace (.Get "src") "\\" "/" -}}
+{{- $isAsis := or (eq $loc "asis") (findRE "^(https://|http://)" $src) -}}
+{{- if and (not $isAsis) (isset $.Site.Params.imageSources $loc) -}}
+	{{- $src = trim $src "/" -}}
+	{{- $path = trim (index $.Site.Params.imageSources $loc) "/" -}}
+	{{- $src = print $path "/" $src -}}
+{{- end -}}
+
+<figure class="figure4img{{- with .Get "class" }} {{ . }}{{ end -}}">
+	{{- with .Get "href" }}
+	<a href="{{ . }}">
+	{{ end }}
+		<img src="{{ $src | relURL }}" alt="{{ .Get "alt" }}" loading="lazy"
+			class="img-fluid img-thumbnail{{ with .Get "classImg" }} {{ . }}{{ end }}" />
+    {{- if .Get "href" }}
+	</a>
+	{{ end }}
+	{{- if (.Get "caption") -}}
+	<figcaption>
+		{{- .Get "caption" | safeHTML -}}
+		{{- /* Ohne print werden gelegentl. HTMLEntities gesetzt (???). */ -}}
+	{{- print "</figcaption>" | safeHTML -}}
+	{{- end }}
+</figure>

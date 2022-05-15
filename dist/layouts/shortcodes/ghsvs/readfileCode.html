@@ -1,0 +1,23 @@
+{{- $file := .Get "file" -}}
+
+{{- /* Get file content via readfile or resource. */ -}}
+{{- .Scratch.Set "READFILE" $file -}}
+{{- $fileContent := partial "getFileContent.html" . -}}
+
+{{- if $fileContent -}}
+	{{- $codeLang := "" -}}
+	{{- $suffix := findRE "(\\.[^.]+)$" $file 1 -}}
+	{{- with $suffix }}{{ $codeLang = (index . 0 | strings.TrimPrefix ".") }}{{ end -}}
+	{{- with .Get "lang" }}{{ $codeLang = . }}{{ end -}}
+	{{- if eq $codeLang "html" }}{{ $codeLang = "go-html-template" }}{{ end -}}
+
+	{{- $fileContent = (replace $fileContent "\t" (site.Params.tabReplacement
+		| default "  ")) -}}
+	{{- $fileContent = trim $fileContent "\n" | safeHTML -}}
+	<div class="codeContainer">
+	<p class="codeCaption">{{ partialCached "bi/code-slash.svg" . }} {{ (.Get "caption" | safeHTML) | default $file }}</p>
+	{{ highlight $fileContent $codeLang "" }}
+	</div>
+{{- else -}}
+	<p class="alert alert-danger">{{ i18n "fileNotFound" $file }}</p>
+{{- end -}}

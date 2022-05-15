@@ -1,0 +1,39 @@
+{{ $.Page.Scratch.SetInMap "SCRATCH_JS" "venobox" true }}
+{{ $.Page.Scratch.SetInMap "SCRATCH_CSS" "venobox" true }}
+
+.Ordinal: {{ .Ordinal }}<br>
+.Ordinal string: {{ .Ordinal | string }}<br>
+.Ordinal add 1 string: {{ add .Ordinal 1 | string }}<br>
+.Position {{ .Position }}<br>
+.Name {{ .Name }}<br>
+
+{{- $loc := (.Get "loc" | default "local") -}}
+{{- $path := "" -}}
+{{- $src := replace (.Get "src") "\\" "/" -}}
+{{- $isAsis := or (eq $loc "asis") (findRE "^(https://|http://)" $src) -}}
+{{- if and (not $isAsis) (isset $.Site.Params.imageSources $loc) -}}
+	{{- $src = trim $src "/" -}}
+	{{- $path = trim (index $.Site.Params.imageSources $loc) "/" -}}
+	{{- $src = print $path "/" $src -}}
+{{- end -}}
+{{- $caption := (.Get "caption") -}}
+{{- $dataTitle := .Get "data-title" | default $caption -}}
+
+<div class="article_image-limiter">
+	<figure class="autoLimited article_image item-image-in-article ghsvs_img-default figure4img{{- with .Get "class" }} {{ . }}{{ end -}}">
+		<a href="{{ $src | relURL }}" class="venobox" {{ with $dataTitle }} data-title="{{ . }}"{{ end }}>
+			<img src="{{ $src | relURL }}" alt="{{ .Get "alt" }}" loading="lazy"
+				class="img-fluid img-thumbnail{{ with .Get "classImg" }} {{ . }}{{ end }}"/>
+		</a>
+		{{- if or $caption (.Get "href") -}}
+		<figcaption class="figure-caption">
+			{{ with $caption }}
+			{{- . | safeHTML -}}
+			{{ end }}
+			{{ with .Get "href" }}
+			<a class="aInCaption" href="{{ . }}">{{ . }}</a>
+			{{ end -}}
+		</figcaption>
+		{{- end }}
+	</figure>
+</div>

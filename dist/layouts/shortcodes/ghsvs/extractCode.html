@@ -1,0 +1,44 @@
+{{- $name := .Get "name" -}}
+{{- $file := .Get "file" -}}
+{{- $match := printf "<p class=\"alert alert-danger\">%s</p>" (i18n "fileNotFound" $file) -}}
+
+{{- /* If any parameters are missing, print an error and exit */ -}}
+{{- if or (not $name) (not $file) -}}
+  {{- errorf "%s: %q: Missing required parameters! Got: name=%q file=%q!" .Position .Name $name $file -}}
+{{- else -}}
+
+	{{- /* Get file content via readfile or resource. */ -}}
+	{{ .Scratch.Set "READFILE" $file }}
+	{{- $fileContent := partial "getFileContent.html" . -}}
+
+	{{- if $fileContent -}}
+		{{- $capture_start := printf "####EXTRAKT-START %s\n" $name -}}
+		{{- $capture_end := printf "####EXTRAKT-END %s" $name -}}
+		{{- $suffix := (findRE "(\\.[^.]+)$" $file 1) -}}
+
+		{{- if $suffix -}}
+			{{- $suffix := (index $suffix 0) -}}
+
+			{{- if eq $suffix ".html" -}}
+				{{- $capture_start = printf "<!--####EXTRAKT-START %s-->" $name -}}
+				{{- $capture_end = printf "<!--####EXTRAKT-END %s-->" $name -}}
+			{{- else if eq $suffix ".json" -}}
+				{{- $capture_start = printf "\"####EXTRAKT-START %s\": \"\"," $name -}}
+				{{- $capture_end = printf "\"####EXTRAKT-END %s\": \"\"" $name -}}
+			{{- end -}}
+		{{- end -}}
+
+		{{- $regex := printf `%s((?:.|\n)*)%s` $capture_start $capture_end -}}
+		{{- $match = index (findRE $regex $fileContent) 0 -}}
+
+		{{- if not $match -}}
+			{{- warnf "%s: %q: Got no matches for name=%q in file=%q!" .Position .Name $name $file -}}
+		{{- end -}}
+
+		{{- $match = replace $match $capture_start "" -}}
+		{{- $match = replace $match $capture_end "" -}}
+	{{- end -}}
+
+	{{- $match | safeHTML -}}
+
+{{- end -}}

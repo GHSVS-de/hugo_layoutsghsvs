@@ -1,0 +1,14 @@
+{{- .Scratch.Set "READFILE" (.Get "file") -}}
+
+{{- /* Get file content via readfile or resource. */ -}}
+{{- $fileContent := partial "getFileContent.html" . -}}
+
+{{- if $fileContent -}}
+	{{- if eq (.Get "markdown") "true" -}}
+		{{- $fileContent | .RenderString -}}
+	{{- else if (.Get "highlight") -}}
+		{{- highlight $fileContent (.Get "highlight") "" -}}
+	{{- else -}}
+		{{- $fileContent -}}
+	{{- end -}}
+{{- end -}}

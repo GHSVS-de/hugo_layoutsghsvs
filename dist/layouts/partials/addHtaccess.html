@@ -1,0 +1,25 @@
+{{- /*
+- Konfiguration via \data\__Secret__\addHtaccess.yml.
+- Der ungewöhnliche Speicherort wegen Sicherheit.
+- Es können mehrere .htaccess in versch. Ordnern konfiguriert werden.
+- Beachte mount auf .htpasswd.
+
+	- source: site/data/__Secret__/.htpasswd
+	  target: assets/.htpasswd
+*/ -}}
+
+{{- $htaccess := resources.Get ".htaccess" -}}
+{{- $htpasswd := resources.Get ".htpasswd" -}}
+
+{{- if and $htaccess $htpasswd -}}
+	{{- range $i,$entry := $.Site.Data.__Secret__.addHtaccess -}}
+		{{- $htaccess := $htaccess
+			| resources.ExecuteAsTemplate (print $entry.folder "/.htaccess") . -}}
+		{{- $htaccess.Publish -}}
+
+		{{- if eq $i 0 -}}
+			{{- $htpasswd := $htpasswd | resources.ExecuteAsTemplate "/.htpasswd" . -}}
+			{{- $htpasswd.Publish -}}
+		{{- end -}}
+	{{- end -}}
+{{- end -}}

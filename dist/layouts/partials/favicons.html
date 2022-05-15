@@ -1,0 +1,40 @@
+{{- /*
+- Die Bilder wurden bspw. generiert mit https://www.favicon-generator.org.
+- Die Pfade in `browserconfig.xml` müssen händisch angepasst werden bzw. ein derartig angepasster Override im Mutterprojekt angelegt werden.
+- - Oder es existiert ein /asset/-Mount, der unten als resources abgegriffen werden kann.
+- Ebenso manifest.json.
+- Der $pathToFavicons ist ggf. ein Mount in KONFIGYML.
+*/ -}}
+
+{{- $pathToFavicons := "/assets/images/favicons/" -}}
+
+{{- range (slice "browserconfig.xml" "manifest.json") -}}
+	{{- $resource := resources.Get (print "mounted/" . ) -}}
+
+	{{- if $resource -}}
+		{{- $resource = $resource
+			| resources.ExecuteAsTemplate (print $pathToFavicons . ) $pathToFavicons -}}
+		{{- $resource.Publish -}}
+	{{- end -}}
+{{- end -}}
+
+{{ "<!--Favicons-->" | safeHTML }}
+<link rel="apple-touch-icon" sizes="57x57" href="{{ $pathToFavicons }}apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="{{ $pathToFavicons }}apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="{{ $pathToFavicons }}apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="{{ $pathToFavicons }}apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="{{ $pathToFavicons }}apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="{{ $pathToFavicons }}apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="{{ $pathToFavicons }}apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="{{ $pathToFavicons }}apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ $pathToFavicons }}apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="{{ $pathToFavicons }}android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ $pathToFavicons }}favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="{{ $pathToFavicons }}favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ $pathToFavicons }}favicon-16x16.png">
+<meta name="msapplication-config" content="{{ $pathToFavicons }}browserconfig.xml">
+<link rel="manifest" href="{{ $pathToFavicons }}manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="{{ $pathToFavicons }}ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+{{ "<!--/Favicons-->" | safeHTML -}}
