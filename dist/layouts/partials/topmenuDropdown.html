@@ -1,0 +1,81 @@
+{{- /* FIRST level sections. FIRST level folders. */ -}}
+{{- $siteSections := sort site.Sections "Title" -}}
+
+{{- /* A sections collection. */ -}}
+{{- $kategorien := slice -}}
+
+{{- range $siteSections -}}
+
+	{{- /* Prüfe (inklusive Kind-Sections), ob es Sinn macht, anzuzeigen. */ -}}
+	{{- $pagesInThisSection := where .RegularPagesRecursive "Params.draft" "!=" true -}}
+
+	{{- if not $pagesInThisSection -}}
+		{{- continue -}}
+	{{- end -}}
+
+	{{- $kategorien = $kategorien | append . -}}
+{{- end -}}
+<header class="navbar navbar-expand-md navbar-dark bd-navbar">
+  <nav class="container-xxl flex-wrap flex-md-nowrap" aria-label="{{i18n "NAVIGATION:TOP"}}">
+
+		{{- with site.Params.logo -}}
+			{{- with .url }}<a href="{{ . }}">{{ end -}}
+				{{- with .image }}<img src="{{ . }}" loading="lazy"
+					alt="{{ site.Params.logo.alt | default (i18n "LOGO") | default "Logo" }}">
+				{{- end -}}
+			{{- if .url }}</a>{{ end -}}
+		{{- end -}}
+
+	  <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+			data-bs-target="#bdNavbar" aria-controls="bdNavbar" aria-expanded="false"
+			aria-label="{{ i18n "toggleTopNavigation" | default "Toggle menu" }}">
+      {{- partialCached "icons/hamburger.svg" (dict "class" "bi" "width" "32" "height" "32") -}}
+    </button>
+
+    <div class="collapse navbar-collapse" id="bdNavbar">
+			<ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link{{if .IsHome}} active" aria-current="page{{end}}"
+						href="/">
+						Home
+					</a>
+        </li>
+				{{- if $kategorien -}}
+					<li class="item-594 level-1 deeper dropdown nav-item liTypeHeading parent">
+						<span tabindex="0" data-bs-toggle="dropdown" aria-haspopup="true"
+							aria-expanded="false" id="navbar-154-594"
+							class="dropdown-toggle nav-link aTypeHeading">
+							{{i18n "sections"}}
+						</span>
+						<ul class="dropdown-menu nav-child" aria-labelledby="navbar-154-594">
+							{{- range $kategorien -}}
+								<li class="level-2">
+									<a href="{{ .RelPermalink }}" class="dropdown-item">
+										{{- .LinkTitle | $.Page.RenderString -}}
+									</a>
+								</li>
+							{{- end -}}
+						</ul>
+					</li>
+				{{- end -}}
+
+				{{- with site.Params.contact -}}
+					{{- $contactLink := partialCached "getContactLink.html" . -}}
+					{{- with $contactLink -}}
+						<li class="nav-item">{{ . }}</li>
+					{{- end -}}
+					{{- with .github -}}
+						<li class="nav-item">
+							<a class="nav-link" href="{{ . }}" aria-label="GitHub">
+								<span aria-hidden="true" class="svgSpan svg-lg text-warning">
+									{{- partialCached "bi/github.svg" . -}}
+								</span>
+							</a>
+						</li>
+					{{- end -}}
+				{{- end -}}
+
+			</ul>
+    </div>
+  </nav>
+</header>

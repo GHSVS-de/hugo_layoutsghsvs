@@ -1,0 +1,21 @@
+{{/*
+- Build template.js with main JS.
+- Nur nebenbei: Sind teils modules.mount.
+*/}}
+{{/*
+Hab das nur mittels Match geschafft, damit ich unten append machen kann.
+*/}}
+{{- $bootstrap := resources.Match "js/bootstrap/bootstrap.bundle.min.js" -}}
+{{- $vendor := resources.Match "js/vendor/*.js" -}}
+{{- $js := resources.Match "js/*.js" -}}
+{{- $loadAfter := resources.Match "js/loadafter/*.js" -}}
+
+{{- $templateJs := append $bootstrap $vendor | append $js | append $loadAfter
+	| resources.Concat "/assets/js/template.js" -}}
+
+{{- if eq hugo.Environment "production" -}}
+	{{- $templateJs = $templateJs | resources.Minify -}}
+{{- end -}}
+
+{{- $templateJs = $templateJs | resources.Fingerprint "sha256" -}}
+{{- partial "script.html" $templateJs -}}

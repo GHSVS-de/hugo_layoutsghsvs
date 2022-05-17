@@ -1,0 +1,52 @@
+{{- $copyright := site.Params.copyright -}}
+{{- $contact := site.Params.contact -}}
+{{- $tmp := "" -}}
+{{- $collect := slice -}}
+
+<!--Copyright Years-->
+{{- $tmp = "&copy" -}}
+{{- with $copyright.startYear -}}
+	{{$tmp = print $tmp . "-"}}
+{{- end -}}
+{{ $tmp = print $tmp (now.Format "2006") -}}
+{{- $collect = $collect | append $tmp -}}
+
+<!--Copyright Holder (name, company, whatever)-->
+{{- with ($copyright.title | default $contact.title | default site.Params.author) -}}
+	{{ $collect = $collect | append . }}
+{{- end -}}
+
+<!--Telefon -->
+{{- with $contact.tel -}}
+	{{- $telLink := $contact.telLink -}}
+
+	{{- if $telLink -}}
+		{{$tmp = ( printf `<a href="%s">%s</a>` $telLink . ) }}
+	{{- else -}}
+		{{$tmp = . }}
+	{{- end -}}
+
+	{{- $collect = $collect | append $tmp -}}
+{{- end -}}
+
+<!--Kontakt-->
+{{- $tmp = partialCached "getContactLink.html" . -}}
+{{- with $tmp -}}
+	{{- $collect = $collect | append $tmp -}}
+{{- end -}}
+
+{{- $collect = delimit $collect ($copyright.divider | default " ° ") -}}
+
+<div id="CfCopyright" class="cf-outer py-2">
+	<div class="CfCopyrightInner cf-inner">
+		<div class="CfCopyright container-fluid">
+			<div class="row">
+				<div id="mod_footerghsvs159" class="col-12 text-center">
+					<div class="footerghsvs" aria-label="Copyright">
+						{{- $collect -}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,26 @@
+{{/*
+Hier verwende ich absichtlich eine mehrschrittige Variante und ohne die üblichen
+Pipes laut Hugo-Docs oder Bootstrap, da mehrere toCSS, eins mit "expanded",
+eins mit "compressed", durcheinander kommen und nicht alle Dateien erzeugt
+werden. Nach 2h hatte ich einfach keinen Bock mehr weiter zu forschen.
+Es bleibt nat. zu hinterfragen, warum ich eigentlich beide Dateien speichere ;-)
+Siehe ".Publish".
+*/}}
+{{- $postcssOptions := (dict "use" "autoprefixer" "noMap" true) -}}
+{{- $target := "/assets/css/template.css" -}}
+{{- $options := (dict "targetPath" $target "outputStyle" "expanded" "enableSourceMap" false "precision" 6) -}}
+{{- $sass := resources.Get "scss/template.scss" -}}
+{{- $file := $sass | toCSS $options  -}}
+{{- $file = $file | postCSS $postcssOptions -}}
+
+{{- $minified := $file | minify | resources.Fingerprint "sha256" -}}
+{{- $minified.Publish  -}}
+
+{{- $file = $file | resources.Fingerprint "sha256" -}}
+{{- $file.Publish  -}}
+
+{{- if eq hugo.Environment "production" -}}
+	{{- partial "stylesheet.html" $minified -}}
+{{- else -}}
+	{{- partial "stylesheet.html" $file -}}
+{{- end -}}

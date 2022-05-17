@@ -1,0 +1,20 @@
+{{/*
+- In KONFIGYML siehe params.scss.filesToCompile.
+- Ein Array mit Dateinamen ohne Endung im /assets/scss/.
+- Diese werden einzeln SASS-kompiliert und gespeichert.
+- Ziel der CSS-Dateien PATH_PUBLIC/assets/css/.
+- Aber noch nicht geladen! Das kann bspw. durch "extra_css" in frontMatter passieren.
+*/}}
+{{- range .Site.Params.Scss.filesToCompile -}}
+	{{- $sass := resources.Get (path.Join "scss" (print  .  ".scss")) -}}
+	{{- if $sass -}}
+		{{- $postcssOptions := (dict "use" "autoprefixer" "noMap" true) -}}
+		{{- $target := path.Join "/assets/css" (print . ".css") -}}
+		{{- $options := (dict "targetPath" $target "outputStyle" "expanded" "enableSourceMap" false "precision" 6) -}}
+		{{- $file := $sass | toCSS $options  -}}
+		{{- $file = $file | postCSS $postcssOptions -}}
+		{{- $minified := $file | minify  -}}
+		{{- $minified.Publish -}}
+		{{- $file.Publish -}}
+	{{- end -}}
+{{- end -}}
