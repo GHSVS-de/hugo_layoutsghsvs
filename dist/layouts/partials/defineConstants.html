@@ -1,0 +1,12 @@
+{{- range $key,$val := .Site.Params.pathShortcuts -}}
+	{{- $key = print "PATH_" (upper $key) -}}
+	{{- $.Scratch.Set $key $val -}}
+	{{- $.Store.Set $key $val -}}
+{{- end -}}
+
+{{- /* Halde:
+Scratch versus Store: https://discourse.gohugo.io/t/scratch-sometimes-has-empty-data-in-development-mode/38603/2
+
+$.Page.Scratch.Set "_PATH_" .Site.Params.pathShortcuts
+$.Page.Scratch.SetInMap "pathShortcuts" "PATH_PARTIAL" "site/layouts/partials"
+*/ -}}

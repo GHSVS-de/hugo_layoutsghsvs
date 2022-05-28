@@ -1,0 +1,41 @@
+{{- $sectionsOrder := .Scratch.Get "htmlSitemapOrderSections" | default "Title" -}}
+{{- $pagesOrder := .Scratch.Get "htmlSitemapOrderPages" | default "Name" -}}
+
+{{- /* FIRST level sections. FIRST level folders. */ -}}
+{{- $siteSections := sort site.Sections $sectionsOrder -}}
+
+<div class=nestedList>
+	<ul class="list-group-numbered">
+		{{- range $siteSections -}}
+			{{/* Prüfe (inklusive Kind-Sections), ob es Sinn macht, fortzufahren. */}}
+			{{- $pagesInThisSection := where .RegularPagesRecursive "Params.draft" "!=" true -}}
+
+			{{- if not $pagesInThisSection -}}
+				{{- continue -}}
+			{{- end -}}
+
+			{{- .Scratch.Set "pagesOrder" $pagesOrder -}}
+			{{ template "walk" . }}
+		{{ end }}
+	</ul>
+</div>
+{{- define "walk" }}
+	{{- $pagesOrder := .Scratch.Get "pagesOrder" -}}
+	{{- $level := add (.Scratch.Get "level" | default 1) 1 -}}
+	{{- $liClass := "" -}}
+	{{- if and (gt $level 2) .Pages -}}
+		{{- $liClass = " class='hasChildren'" -}}
+	{{- end -}}
+  <li{{ $liClass | safeHTMLAttr }}>
+    <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+    {{- with .Pages }}
+      <ul>
+				{{- range sort . $pagesOrder -}}
+					{{- .Scratch.Set "pagesOrder" $pagesOrder -}}
+					{{- .Scratch.Set "level" $level -}}
+          {{- template "walk" . -}}
+        {{- end }}
+      </ul>
+    {{- end }}
+  </li>
+{{- end -}}

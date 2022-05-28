@@ -1,0 +1,112 @@
+{{- /* Nicht partialCached! Vielleichts schafft .Page.Store dann Abhilfe? */ -}}
+{{- partial "defineConstants.html" . -}}
+{{- /*
+Dieses frühe $TOC ist eine Krücke, weil sonst SCRATCH_CSS ins Leere läuft.
+Und zwar immer, wenn load_css vor der Verwendung von .TableOfContents verwendet
+wird. Ich habe keine Ahnung, wie die Zudsammenhänge sind????
+*/ -}}
+{{- $TOC := .TableOfContents -}}
+
+<!doctype html>
+<html lang="{{ site.LanguageCode }}"{{ with .Page.Params.html_class }} class="{{ . }}"{{ end }}>
+	<head>
+	{{- partial "head.html" . -}}
+	</head>
+  {{ block "body_override" . }}<body>{{ end -}}
+
+		{{- /* partial "topmenu.html" . */ -}}
+		{{- partial "topmenuDropdown.html" . -}}
+
+		<div class="sticky-top" id=CfButtonGruppe>
+			<div class="d-flex flex-row justify-content-between">
+				<div>{{- partial "breadcrumbs.html" . -}}</div>
+				<div>
+					{{- .Scratch.Set "prevNext" (dict "articleLabelClass" "visually-hidden" "addTitle" true) -}}
+					{{- partial "prevNext.html" . -}}
+				</div>
+				<div>{{- partial "sidemenu.html" . -}}</div>
+			</div><!--/d-flex flex-row justify-content-between-->
+		</div><!--/sticky-top -->
+
+
+		<div class="container-xxl my-md-4 bd-layout">
+			<main class="bd-main order-1">
+				{{ partial "headlines.html" . }}
+				{{- /*
+				Beachte zu $TOC, dass es auch /ol sein kann. Je nach Parameter
+				tableOfContents.ordered in KONFIGYML.
+				*/ -}}
+				{{ if and (ne .Page.Params.toc false) (in $TOC "</ul>") }}
+					<div class="bd-toc mt-4sss mb-5ss my-md-0ss ps-xl-3sss mb-lg-5sss">
+						<strong class="d-block h6 my-2 pb-2 border-bottom">{{ i18n "TPL_BS4GHSVS_MODAL_BUTTON_SCROLL_TO" }}</strong>
+						{{ $TOC }}
+					</div>
+				{{ end }}
+
+				<div class="bd-content">
+					{{ block "main" . }}{{ end }}
+					{{ .Scratch.Set "prevNext" (dict "class" "below") }}
+					{{ partial "prevNext.html" . }}
+				</div>{{ "<!--/bd-content -->" | safeHTML }}
+
+        {{ if .Page.Params.sections }}
+					<div class="row g-3">
+						<h1>ICH BIN .Page.Params.sections</h1>
+						{{ range .Page.Params.sections }}
+							<div class="col-md-6">
+								<a class="d-block text-decoration-none" href="../{{ urlize .title }}/">
+									<strong class="d-block h5 mb-0">{{ .title }}</strong>
+									<span class="text-secondary">{{ .description }}</span>
+								</a>
+							</div>
+						{{ end }}
+					</div>
+        {{ end }}
+			</main>
+		</div><!--/.bd-layout-->
+		{{- partialCached "back-to-top.html" . -}}
+		{{- partialCached "copyright.html" . -}}
+		{{- block "load_js" . }}{{ end -}}
+  </body>
+	{{- partialCached "addHtaccess.html" . -}}
+</html>
+
+{{- define "extra_js" -}}
+	{{- range .Page.Params.extra_js -}}
+	<script src="{{ .src }}"
+		{{- with .module }} type="module"{{end -}}
+		{{- with .async }} async{{end -}}
+		{{- with .defer }} defer{{end -}}
+		{{- with .integrity -}}
+		{{- printf " integrity=%q" . | safeHTMLAttr }} crossorigin="anonymous"{{- end -}}
+	></script>
+	{{- end -}}
+{{- end -}}
+
+{{- define "scratch_js" -}}
+	{{/*
+	Beispiel /site/assets/venobox/.*.js.
+	Shortcode hat Zeile $.Page.Scratch.SetInMap "SCRATCH_JS" "venobox" true.
+	Folgend fasst alle darin enthaltenen *.js zusammen.
+	Lädt dann online src="/assets/js/scratch_js/venobox.min.js".
+	*/}}
+	{{- range $folder,$dummy := $.Page.Scratch.Get "SCRATCH_JS" -}}
+		{{- $SCRATCH_JS := resources.Match (printf "%s/%s/%s" "js" $folder "*.js") -}}
+		{{- if $SCRATCH_JS -}}
+			{{- $targetPath := printf "%s%s%s" "/assets/js/scratch_js/" $folder ".js" -}}
+			{{- $targetJS := $SCRATCH_JS
+				| resources.Concat $targetPath
+				| resources.Minify
+				| resources.Fingerprint "sha256" -}}
+			{{- partial "script" $targetJS -}}
+		{{- end -}}
+	{{- end -}}
+{{- end -}}
+
+{{- define "load_js" -}}
+	{{- if ne .Page.Params.include_js false -}}
+		{{- partialCached "jsLoadResources.html" . -}}
+		{{ block "scratch_js" . }}{{ end }}
+		{{ block "extra_js" . }}{{ end }}
+	{{- end -}}
+{{- end -}}

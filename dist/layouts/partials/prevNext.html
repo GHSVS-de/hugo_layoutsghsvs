@@ -1,0 +1,80 @@
+{{- /*
+<!--####EXTRAKT-START docBlock-->
+- Die erste Variante wird nur verwendet, wenn für die .Section eine Datei in prevNext/ existiert.
+  - Die ist im Normalfall abhängig vom Ergebnis eines buildBefore/-Skriptes.
+- Die zweite Fallback-Variante ist Hugo-Core. Da nervt mich die ewige Pflegerei von Front-Matter, wenn man Seite zwischenschieben will.
+
+Ich weiß nicht, was nun weniger Pflegearbeit macht, wenn man eine sinnvolle Sortierung haben will bzw. eine Synchronisierung mit z.b. dem Sidemenu. Momentan bin ich etwas lustlos und die Sortierung ist meist zufällig (Hugo rules).
+<!--####EXTRAKT-END docBlock-->
+ */ -}}
+
+{{- $prevNext := index $.Site.Data.prevNext .Section -}}
+{{- if $prevNext -}}
+	{{$prevNext = index ($prevNext) ($.Page.RelPermalink)}}
+{{- end -}}
+
+{{- $options := .Scratch.Get "prevNext" -}}
+{{- $articleLabelClass := "articleLabel" -}}
+
+{{- with $options.articleLabelClass -}}
+	{{$articleLabelClass = printf "%s %s" $articleLabelClass .}}
+{{- end -}}
+
+{{- if or $prevNext.prev $prevNext.next -}}
+<nav class="pager page-nav articlePagination{{ with $options.class }} {{ . }}{{ end }}"
+	aria-label="{{ i18n "prevNextNavLabel" }}">
+	<div class="row align-items-center justify-content-between">
+		<div class="col-auto">
+			{{- if $prevNext.prev -}}
+			 {{- $title := $prevNext.prevTitle | $.Page.RenderString -}}
+				<a class="btn btnPrev" href="{{ $prevNext.prev }}" rel="prev"
+					{{- if $options.addTitle}} title="{{$title}}"{{end}}>
+					{{ .Scratch.Set "icon" (dict "icon" "skip-backward-fill") }}
+					{{ partial "ghsvs-bi.html" . }}
+					<span class="{{ $articleLabelClass }}">{{$title}}</span>
+				</a>
+			{{- end -}}
+		</div>
+		<div class="col-auto">
+			{{- if $prevNext.next -}}
+				{{- $title := $prevNext.nextTitle | $.Page.RenderString -}}
+				<a class="btn btnNext" href="{{ $prevNext.next }}" rel="next"
+					{{- if $options.addTitle}} title="{{$title}}"{{end}}>
+					<span class="{{ $articleLabelClass }}">{{$title}}</span>
+					{{ .Scratch.Set "icon" (dict "icon" "skip-forward-fill") }}
+					{{ partial "ghsvs-bi.html" . }}
+				</a>
+			{{- end -}}
+		</div>
+	</div>
+</nav>
+{{- else if or .PrevInSection .NextInSection -}}
+<div class="articlePagination below">
+	<nav class="pager page-nav" aria-label="{{ i18n "prevNextNavLabel" }}">
+		<div class="row align-items-center justify-content-between">
+				<div class="col-auto">
+					{{ with .PrevInSection }}
+						{{- $title := .Title | $.Page.RenderString -}}
+						<a class="btn btnPrev" href="{{.Permalink}}" rel="prev"
+							{{- if $options.addTitle}} title="{{$title}}"{{end}}>
+							{{ .Scratch.Set "icon" (dict "icon" "skip-backward-fill") }}
+							{{- partial "ghsvs-bi.html" . }}
+							<span class="{{ $articleLabelClass }}">{{$title}}</span>
+						</a>
+					{{- end -}}
+			</div>
+			<div class="col-auto">
+				{{ with .NextInSection }}
+					{{- $title := .Title | $.Page.RenderString -}}
+					<a class="btn btnNext" href="{{.Permalink}}" rel="next"
+						{{- if $options.addTitle}} title="{{$title}}"{{end}}>
+						<span class="{{$articleLabelClass}}">{{$title}}</span>
+						{{ .Scratch.Set "icon" (dict "icon" "skip-forward-fill") }}
+						{{ partial "ghsvs-bi.html" . -}}
+					</a>
+				{{- end -}}
+			</div>
+		</div>
+	</nav>
+</div>
+{{- end -}}
