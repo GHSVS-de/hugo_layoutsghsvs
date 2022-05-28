@@ -1,21 +1,17 @@
 {{ $.Page.Scratch.SetInMap "SCRATCH_JS" "venobox" true }}
 {{ $.Page.Scratch.SetInMap "SCRATCH_CSS" "venobox" true }}
 
-.Ordinal: {{ .Ordinal }}<br>
-.Ordinal string: {{ .Ordinal | string }}<br>
-.Ordinal add 1 string: {{ add .Ordinal 1 | string }}<br>
-.Position {{ .Position }}<br>
-.Name {{ .Name }}<br>
-
 {{- $loc := (.Get "loc" | default "local") -}}
 {{- $path := "" -}}
 {{- $src := replace (.Get "src") "\\" "/" -}}
 {{- $isAsis := or (eq $loc "asis") (findRE "^(https://|http://)" $src) -}}
+
 {{- if and (not $isAsis) (isset $.Site.Params.imageSources $loc) -}}
 	{{- $src = trim $src "/" -}}
 	{{- $path = trim (index $.Site.Params.imageSources $loc) "/" -}}
 	{{- $src = print $path "/" $src -}}
 {{- end -}}
+
 {{- $caption := (.Get "caption") -}}
 {{- $dataTitle := .Get "data-title" | default $caption -}}
 
