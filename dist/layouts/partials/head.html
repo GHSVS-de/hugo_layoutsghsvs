@@ -64,6 +64,9 @@ Concat optional CSS. Collected in .Scratch "SCRATCH_CSS" and LINK it.
 	{{- partialCached "favicons.html" . -}}
 {{- end -}}
 
+{{- if site.Params.ldjson.breadcrumbs -}}
+	{{- partial "ld+json/breadcrumbs.html" . -}}
+{{- end -}}
 
 {{- /* ###BLOCKS### */ -}}
 {{- define "scratch_css" -}}
