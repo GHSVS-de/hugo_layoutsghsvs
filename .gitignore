@@ -16,6 +16,7 @@ _______SCHAU-DIR-DAS-AN
 
 buildBefore/vendor/bin
 buildBefore/Console
+buildBefore/vendor
 
 !/dist/**
 src/vendor/bin/pscss
