@@ -1,0 +1,42 @@
+{{- $params := site.Params.Breadcrumb -}}
+
+{{- if .Parent -}}
+<nav aria-label="breadcrumb">
+	<ol class="breadcrumb">
+		{{- if $params.showHere -}}
+			<li class=breadcrumb-item>
+				{{- .Scratch.Set "icon" (dict "icon" "geo-fill") -}}
+				{{- partial "ghsvs-bi.html" . -}}
+				<span class=visually-hidden>{{ i18n "BREADCRUMB:HERE" }}</span>
+			</li>
+		{{- end -}}
+		{{- $uniqueId := (.File.UniqueID | default (md5 "pumpasdasdasfallera")) -}}
+		{{- template "breadcrumb" dict "currentPage" .Page "id" $uniqueId "params" $params -}}
+	</ol>
+</nav>
+{{- end -}}
+
+{{ define "breadcrumb" }}
+
+	{{- if .currentPage.Parent -}}
+		{{- template "breadcrumb" dict "currentPage" .currentPage.Parent -}}
+	{{ end }}
+
+	{{- $uniqueId := (md5 "rimsepimsetralala") -}}
+
+	{{- with .currentPage.File -}}
+		{{- $uniqueId = .UniqueID -}}
+	{{- end -}}
+
+	{{- if eq .id $uniqueId -}}
+		{{- if .params.showLast -}}
+			<li class="breadcrumb-item active" aria-current="page">
+				{{- .currentPage.Title -}}
+			</li>
+		{{- end -}}
+	{{- else -}}
+		<li class="breadcrumb-item">
+			<a href="{{ .currentPage.RelPermalink }}">{{ .currentPage.Title }}</a>
+		</li>
+	{{- end -}}
+{{- end -}}

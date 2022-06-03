@@ -1,0 +1,40 @@
+{{- /*
+Partial getFileContent.html.
+- Get .Content of a local file or (mounted) resource file.
+- Scope . is the Page.
+- Usage:
+{{ .Scratch.Set "READFILE" "path/to/file" }}
+{{ $content := partial "getFileContent.html" . }}
+ */ -}}
+
+{{- $fileContent := "" -}}
+{{- $READFILE := partial "replacePathConstant.html" ( dict
+	"PAGE" .
+	"PATH" (.Scratch.Get "READFILE") ) -}}
+
+{{- if $READFILE -}}
+	{{- /* warnf "DEBUGGING: $READFILE %q ." $READFILE */ -}}
+
+	{{- /* Try resource */ -}}
+	{{- if not (fileExists $READFILE) -}}
+		{{- $tmp := resources.Get $READFILE -}}
+		{{- if $tmp -}}
+			{{- $fileContent = $tmp.Content | safeHTML -}}
+		{{- end -}}
+	{{- else -}}
+		{{- $fileContent = readFile $READFILE | safeHTML -}}
+	{{- end -}}
+{{- end -}}
+
+{{- if not $fileContent -}}
+  {{- $path := "" -}}
+  {{- with $.Page.File -}}
+		{{- $path = .Path -}}
+  {{- else -}}
+		{{- $path = $.Page.Path -}}
+  {{ end }}
+
+	{{- warnf "$fileContent in partial %q for %q not found: %q, %q, (%s)" "getFileContent.html" $READFILE .Name $path .Position -}}
+{{- end -}}
+
+{{- return $fileContent -}}

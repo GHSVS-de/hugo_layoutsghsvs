@@ -1,0 +1,4 @@
+<a class="btn btn-primary" href="{{ .Permalink | relURL }}"
+	aria-label="{{i18n "READ_MORE_TITLE" (.Title)}}">{{i18n "READ_MORE"}}
+	{{- .Scratch.Set "icon" (dict "icon" "forward")}} {{ partialCached "ghsvs-bi.html" . "readmore" -}}
+</a>

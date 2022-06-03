@@ -1,0 +1,11 @@
+{{- if .Scratch.Get "icon" -}}
+	{{- $icon := index (.Scratch.Get "icon") "icon" -}}
+	{{- $class := index (.Scratch.Get "icon") "class" -}}
+
+	{{- with $icon -}}
+		<span aria-hidden="true" class="svgSpan svg-lg{{ with $class }} {{ . }}{{ end }}">
+		{{- $path := "bi" -}}
+		{{- $widget := (printf "%s/%s.svg" $path . ) -}}
+		{{- partial $widget . -}}</span>
+	{{- end -}}
+{{- end -}}

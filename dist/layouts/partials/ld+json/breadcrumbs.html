@@ -1,0 +1,28 @@
+{{- define "breadcrumbsld" -}}
+	{{- if .p1.Parent -}}
+		{{ template "breadcrumbsld" (dict "p1" .p1.Parent "p2" .p2 ) }}
+	{{- else if not .p1.IsHome -}}
+		{{ template "breadcrumbsld" (dict "p1" .p1.Site.Home "p2" .p2 ) }}
+	{{- end -}}
+
+	{{- $position := len (split (replace .p1.Permalink ("/" | absURL) "") "/") -}}
+
+	{"@type": "ListItem","position":{{$position}},
+"item": {
+	"@id": {{.p1.Permalink }},
+	"name": {{ .p1.Title }}
+} }
+
+	{{- if not (eq .p1 .p2 ) -}},
+{{ end -}}
+{{- end -}}
+
+<script type="application/ld+json">
+{
+	"@context": "http://schema.org",
+	"@type": "BreadcrumbList",
+	"itemListElement": [
+{{template "breadcrumbsld" (dict "p1" . "p2" .)}}
+	]
+}
+</script>

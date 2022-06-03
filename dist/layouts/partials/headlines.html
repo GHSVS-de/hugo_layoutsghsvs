@@ -1,0 +1,10 @@
+<div class="bd-intro">
+	{{- with .Title -}}
+		<div class="page-header">
+			<h1 class="bd-title" id="content">{{ . | $.Page.RenderString }}</h1>
+		</div>
+	{{- end -}}
+	{{- with .Description -}}
+		<div class="bd-lead">{{ . | $.Page.RenderString }}</div>
+	{{- end -}}
+</div>

@@ -1,0 +1,27 @@
+# www.robotstxt.org
+
+## Idee verworfen!
+# site.SitemapAbsURL: {{ site.SitemapAbsURL }}
+
+{{- $isProduction := eq hugo.Environment "production" -}}
+{{- $isNetlify := eq (getenv "NETLIFY") "true" -}}
+{{- $allowCrawling := and (not $isNetlify) $isProduction -}}
+
+{{- $includeSitemap := .Site.Params.robotsSitemap -}}
+{{- if and (ne $includeSitemap false) (ne $includeSitemap true) -}}
+{{- $includeSitemap = not (in .Site.Data.configCopy.Config.disableKinds "sitemap") -}}
+{{- end -}}
+
+{{ if $allowCrawling }}
+# Allow crawling of all content
+{{- end }}
+User-agent: *
+{{- if not $allowCrawling }}
+Disallow: /
+{{- end }}
+{{- range .Site.Params.robotsDisallow }}
+Disallow: {{ . }}
+{{- end }}
+{{- if $includeSitemap }}
+Sitemap: {{ "/sitemap.xml" | absURL }}
+{{- end -}}

@@ -1,0 +1,13 @@
+{{- with .Get "buttonData" -}}
+	{{- $id := index . "id" -}}
+	{{- $icon := (index . "icon") | default "toggles2" -}}
+	<button type="button" class="btn-warning navbarToggler"
+		data-bs-toggle="{{ (index . "dismissType") | default "offcanvas" }}"
+		data-bs-target="#{{ $id }}" aria-controls="{{ $id }}" aria-expanded="false"
+		aria-label="{{ i18n "toggleSidebarNavigation" }}">
+		<span aria-hidden="true" class="svgSpan">
+			{{- $path := "bi" -}}
+			{{- $widget := (printf "%s/%s.svg" $path $icon ) -}}
+			{{- partial $widget . -}}</span>
+	</button>
+{{- end -}}

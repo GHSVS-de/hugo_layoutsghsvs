@@ -1,0 +1,11 @@
+{{- with .Get "buttonData" -}}
+<button type="button"
+	data-bs-dismiss="{{- (index . "dismissType") | default "modal" -}}"
+	aria-label="{{ i18n "PLG_SYSTEM_BS3GHSVS_CLOSE" }}">
+	<span aria-hidden="true" class="svgSpan svg-lg text-danger">
+		{{- $path := "bi" -}}
+		{{- $icon := "x-circle-fill" -}}
+		{{- $widget := (printf "%s/%s.svg" $path $icon ) -}}
+		{{- partial $widget . -}}</span>
+</button>
+{{- end -}}

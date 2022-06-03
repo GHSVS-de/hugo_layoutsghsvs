@@ -1,0 +1,7 @@
+{{- $summary := default .Description .Params.summary -}}
+
+{{- if strings.Contains .RawContent "<!--more-->" -}}
+	{{- $summary = .Summary -}}
+{{- end -}}
+
+{{- return $summary -}}
