@@ -1,9 +1,15 @@
 {{- /*
-  Usage: `callout "type"`, where `type` is one of info (default), danger, or warning
+- Usage: `callout "type"`[false], where `type` is one of info (default), danger, or warning.
+- @since Hugo 100.0 crasht dieses Shortcode, wenn ein < code/ghsvs > eigebettet ist.
+  - deshalb wurde parameter markdownify eingeführt, der explizit auf false gesetzt sein muss, um $.Page.RenderString zu umschiffen.
 */ -}}
 
 {{- $css_class := .Get 0 | default "info" -}}
-
+{{- $markdownify := .Get 1 | default true -}}
 <div class="bd-callout bd-callout-{{ $css_class }}">
+{{- if $markdownify -}}
 {{ .Inner | $.Page.RenderString }}
+{{- else -}}
+{{ .Inner }}
+{{- end -}}
 </div>
