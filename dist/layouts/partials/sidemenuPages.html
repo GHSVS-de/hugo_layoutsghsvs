@@ -1,0 +1,73 @@
+{{ partial "comment" "testmenu.html" }}
+
+{{- $id := print "nav" (md5 (print now .RelPermalink)) -}}
+{{- $dismissType := "offcanvas" -}}
+{{- $navTitle := i18n "pageNavigationFor" .CurrentSection.Name -}}
+{{- $currentUrl := .RelPermalink -}}
+{{- $pagesInThisSection := sort (where .CurrentSection.RegularPages "Params.draft" "!=" true) "LinkTitle" -}}
+{{- $sectionsInThisSection := sort (where .CurrentSection.Sections "Params.draft" "!=" true) "LinkTitle" -}}
+
+{{- /* Populate openerButton and closeButton. */ -}}
+{{- .Scratch.Set "buttonData" (dict "dismissType" $dismissType "id" $id) -}}
+{{- .Scratch.SetInMap "buttonData" "icon" "list" -}}
+
+{{- partial "openerButton.html" .Scratch -}}
+
+<nav class="text-start {{ $dismissType }} offcanvas-start bd-linksCustom" tabindex="-1"
+	id="{{ $id }}" aria-label="{{$navTitle}}"
+	aria-labelledby="{{ $id }}Header">
+
+	<div class="offcanvas-header bg-light">
+		<span class="h5" id="{{ $id }}Header">
+			{{- $navTitle -}}
+		</span>{{partial "closeButtonTop.html" .Scratch -}}
+	</div>
+
+	<div class="offcanvas-body">
+		{{- with .CurrentSection -}}
+
+			{{- $active := eq .RelPermalink $currentUrl -}}
+
+			<ul class="list-unstyled">
+<!--/ class="active" aria-current="page" -->
+				<li>
+					<a href="{{.RelPermalink}}"{{with $active}} class="active" aria-current="page"{{end}}>
+						{{- .LinkTitle -}}
+					</a>
+
+					{{- with $pagesInThisSection -}}
+						<ul class="ps-0">
+							{{- range . -}}
+								{{- $active := eq .RelPermalink $currentUrl -}}
+
+								<li style="list-style-position: inside;">
+									<a href="{{.RelPermalink}}"{{with $active}} class="active" aria-current="page"{{end}}>
+										{{- .LinkTitle -}}
+									</a>
+								</li>
+							{{- end -}}
+						</ul>
+					{{- end -}}
+
+				</li>
+				{{- end -}}
+			</ul>
+
+			{{- with $sectionsInThisSection -}}
+				<span class="h6">
+					{{- i18n "subSections" -}}
+				</span>
+				<ul class="ps-0">
+					{{- range . -}}
+						{{- $active := eq .RelPermalink $currentUrl -}}
+
+						<li style="list-style-position: inside;">
+							<a href="{{.RelPermalink}}"{{with $active}} class="active" aria-current="page"{{end}}>
+								{{- .LinkTitle -}}
+							</a>
+						</li>
+					{{- end -}}
+				</ul>
+			{{- end -}}
+	</div>
+</nav>

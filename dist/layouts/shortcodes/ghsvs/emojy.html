@@ -1,0 +1,8 @@
+{{- /*
+- https://www.webfx.com/tools/emoji-cheat-sheet/
+- Usage: {{< ghsvs/emojy "smile"  }}
+- Hint: The easier variant is to set "enableEmoji: false" in config.
+  Then you can use :smile: in markdown.
+ */ -}}
+
+{{- emojify (printf ":%s:" (.Get 0)) -}}

@@ -1,0 +1,9 @@
+{{- define "body_override" -}}
+<body class="layout-404 section-{{.Section}}">
+{{- end -}}
+
+{{ define "main" }}
+  <main class="my-auto p-5" id="content">
+    {{ .Content }}
+  </main>
+{{ end }}

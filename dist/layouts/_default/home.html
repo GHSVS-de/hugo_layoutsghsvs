@@ -1,0 +1,8 @@
+{{- define "body_override" -}}
+<body class="layout-home section-{{.Section}} alias-{{replace (.RelPermalink | strings.TrimLeft "/" | path.Clean) "/" "_" }} no-grid">
+{{- end -}}
+
+{{ define "main" }}
+	{{- partialCached "htmlSitemap.html" . -}}
+	{{ .Content }}
+{{ end }}

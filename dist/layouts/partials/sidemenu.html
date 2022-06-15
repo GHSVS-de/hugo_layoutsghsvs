@@ -1,0 +1,130 @@
+{{- $debug := 0 -}}
+
+{{- $relPath := split .RelPermalink "/" -}}
+{{- if $debug }}$relPath: {{delimit $relPath "|"}}<br>
+$relPath len: {{len $relPath}}<br>
+{{ end -}}
+
+{{/*
+Die URL verlängert sich bspw. um ein "/en/", wenn Content nicht in
+	Standardsprache ist. Dann ist ein $offset zu berücksichtigen.
+*/}}
+{{- $offset := 0 -}}
+
+{{- if ne .Site.Data.configCopy.Config.DefaultContentLanguage (print .Language) -}}
+	{{- $offset = 1 -}}
+{{- end -}}
+
+{{/* Ergibt z.B. "my-hugo" aus "0:/1:my-hugo/2:shortcodes/3:code" */}}
+{{- $chapterPart := index $relPath (add 1 $offset) -}}
+{{- if $debug }}$chapterPart: {{$chapterPart}}<br>{{ end -}}
+
+{{/* Ergibt z.B. "shortcode" aus "0:/1:my-hugo/2:shortcode/3:code" */}}
+{{- $mamaPart := index $relPath (add 2 $offset) -}}
+{{- if $debug }}$mamaPart: {{$mamaPart}}<br>{{ end -}}
+
+{{/* Ergibt z.B. "code" aus "0:/1:my-hugo/2:shortcodes/3:code" */}}
+{{- $pagePart := index $relPath (sub (len $relPath) 2) -}}
+{{- if $debug }}$pagePart: {{$pagePart}}<br>{{ end -}}
+
+{{/*
+- Param "sidemenu" in md content frontend matter provided?
+- Fallback: Get configuration of relevant sidemenu yml in folder data/sidemenu/.
+- Also bspw. data/sidemenu/my-hugo.yml.
+*/}}
+{{- $sidemenu := print (.Page.Params.Sidemenu | default $chapterPart) -}}
+{{- $sidemenuData := index .Site.Data.sidemenu $sidemenu -}}
+
+{{- if not $sidemenuData -}}
+{{- partial "sidemenuPages.html" . -}}
+{{- else -}}
+
+<!--WORK IN PROGRESS!!!!!!! -->
+{{- $levels := (index $sidemenuData 0).levels -}}
+{{- if $debug }}$levels: {{ $levels }}<br>{{ end -}}
+
+	{{- /*
+	Add a menu toggler button.
+	*/ -}}
+	{{- $id := print "sidemenu" (md5 (print now $sidemenu)) -}}
+	{{- $dismissType := "offcanvas" -}}
+	{{- .Scratch.Set "buttonData" (dict "dismissType" $dismissType "id" $id) -}}
+	{{- .Scratch.SetInMap "buttonData" "icon" "list" -}}
+	{{- partial "openerButton.html" .Scratch -}}
+
+	<nav class="text-start {{ $dismissType }} offcanvas-start bd-linksCustom" tabindex="-1"
+		id="{{ $id }}" aria-label="{{ i18n "pageNavigationFor" $sidemenu }}"
+		aria-labelledby="{{ $id }}Header">
+
+		<div class="offcanvas-header bg-light">
+			<h5 id="{{ $id }}Header">{{ i18n "pageNavigationFor" $sidemenu }}</h5>
+			{{- partial "closeButtonTop.html" .Scratch -}}
+		</div>
+
+		<div class="offcanvas-body">
+			<ul class="list-unstyled mb-0 py-3 pt-md-1">
+				{{- range $mama := $sidemenuData -}}
+
+					{{/*
+						$link und $link_slug wird unten NIE genutzt!!!
+						Wohl eine Leiche aus Bootstrap.
+						Baue unterste Ebene. Wird lediglich Menütitel mit collapse-Funktion,
+						FALLS pages vorhanden.
+						{{- $link := $mama.title -}}
+						{{- $link_slug := $link | urlize -}}
+						{{- if $mama.pages -}}
+							{{- $link = index $mama.pages 0 -}}
+							{{- $link_slug = $link.title | urlize -}}
+						{{- end -}}
+					*/}}
+
+					{{- $mamaSlug := ($mama.slug | default $mama.path
+						| default $mama.title ) | urlize -}}
+					{{- if $debug }}$mamaSlug: {{$mamaSlug}}<br>{{ end -}}
+					{{- $isActiveMama := eq $mamaPart $mamaSlug -}}
+
+					{{- if $mama.pages }}
+						<li class="mb-1">
+							<button class="btn d-inline-flex align-items-center{{ if not $isActiveMama }} collapsed{{ end }}"
+								data-bs-toggle="collapse"
+								data-bs-target="#{{ $mamaSlug }}-collapse"
+								aria-expanded="{{ $isActiveMama }}"{{ if $isActiveMama }} aria-current="true"{{ end }}>
+								{{ $mama.linktitle | default $mama.title }}
+							</button>
+
+							<div class="collapse{{ if $isActiveMama }} show{{ end }}" id="{{ $mamaSlug }}-collapse">
+								<ul class="list-unstyled fw-normal pb-1 small">
+									{{- range $child := $mama.pages -}}
+										{{- $childSlug := $child.slug | default $child.path | default $child.title -}}
+
+										{{- /*
+										B\C replaceRE, da ich für automatisches weight setzen auch
+											"path: xy.md" verwenden wollte.
+										*/ -}}
+										{{- $childSlug = (replaceRE "\\..+$" "" $childSlug) | urlize -}}
+
+										{{- $isActiveChild := and $isActiveMama (eq $pagePart $childSlug) -}}
+										{{- $href := print (printf "/%s/%s/%s/" $chapterPart $mamaSlug $childSlug | path.Clean) "/" -}}
+
+										<li>
+											<a href="{{ $href }}" class="d-inline-flex align-items-center{{ if $isActiveChild }} active{{ end }}"{{ if $isActiveChild }} aria-current="page"{{ end }}>
+												{{- $child.linktitle | default $child.title -}}
+											</a>
+										</li>
+									{{- end -}}
+								</ul>
+							</div>
+						</li>
+					{{/* We have no pages. */}}
+					{{- else -}}
+						<li>
+							<a href="/{{ $mamaSlug }}/" class="d-inline-flex align-items-center{{ if $isActiveMama }} active{{ end }}"{{ if $isActiveMama }} aria-current="page"{{ end }}>
+								{{ $mama.linktitle | default $mama.title }}
+							</a>
+						</li>
+					{{- end -}}
+				{{- end -}}
+			</ul>
+		</div><!--/offcanvas-body-->
+	</nav>
+{{- end -}}

@@ -1,0 +1,5 @@
+{{- range . -}}
+	<li class="list-group-item">
+		{{- printf "[%s](%s)" .LinkTitle .RelPermalink | .RenderString -}}
+	</li>
+{{- end -}}

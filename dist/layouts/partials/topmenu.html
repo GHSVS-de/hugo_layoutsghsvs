@@ -1,0 +1,53 @@
+{{- $relPath := split .RelPermalink "/" -}}
+
+{{/* Die URL verlängert sich bspw. um ein "/en/" */}}
+{{- $offset := 0 -}}
+{{- if ne .Site.Data.configCopy.Config.DefaultContentLanguage (print .Language) -}}
+	{{- $offset = 1 -}}
+{{- end -}}
+{{/* Ergibt z.B. "my-hugo" aus "0:/1:my-hugo/2:shortcodes/3:code" */}}
+{{- $chapter_slug := index $relPath (add 1 $offset) -}}
+<header class="navbar navbar-expand-md navbar-dark bd-navbar">
+  <nav class="container-xxl flex-wrap flex-md-nowrap" aria-label="Main navigation">
+		<a href="//ghsvs.de">
+		<img src="https://ghsvs.de/images/logos/ghsvs.de-Volkmar-Schlothauer_h60.png">
+		</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#bdNavbar" aria-controls="bdNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      {{- partialCached "icons/hamburger.svg" (dict "class" "bi" "width" "32" "height" "32") -}}
+    </button>
+
+    <div class="collapse navbar-collapse" id="bdNavbar">
+      <ul class="navbar-nav flex-row flex-wrap bd-navbar-nav pt-2 py-md-0">
+        <li class="nav-item col-6 col-md-auto">
+          <a class="nav-link p-2{{ if .IsHome }} active" aria-current="page{{ end }}" href="/">Home</a>
+        </li>
+        <li class="nav-item col-6 col-md-auto">
+          <a class="nav-link p-2{{ if eq $chapter_slug "docsghsvs" }} active" aria-current="true{{ end }}" href="/docsghsvs/">GhsvsDocs</a>
+        </li>
+        <li class="nav-item col-6 col-md-auto">
+          <a class="nav-link p-2{{ if eq $chapter_slug "my-hugo" }} active" aria-current="true{{ end }}" href="/my-hugo/">Mein Hugo-Zeugs</a>
+        </li>
+        <li class="nav-item col-6 col-md-auto">
+          <a class="nav-link p-2" href="{{site.Params.contact.url}}">
+						{{site.Params.contact.title}}
+					</a>
+        </li>
+        <li class="nav-item col-6 col-md-auto">
+          <a class="nav-link p-2" href="{{ .Site.Params.github_org }}" aria-label="GHSVS.de on GitHub">
+						<span aria-hidden="true" class="svgSpan svg-lg text-warning">
+            	{{- partialCached "bi/github.svg" . -}}
+						</span>
+						GitHub
+					</a>
+        </li>
+			</ul>
+{{ if .IsTranslated }}
+	<nav class="LangNav">
+	{{ range .Translations }}
+		<a class="btn btn-bd-download d-lg-inline-block my-2 my-md-0 ms-md-3" href="{{ .Permalink }}">{{ .Language.LanguageName }}</a>
+	{{ end}}
+	</nav>
+{{ end }}
+    </div>
+  </nav>
+</header>

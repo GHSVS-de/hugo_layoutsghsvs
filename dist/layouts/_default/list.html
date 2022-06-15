@@ -1,0 +1,9 @@
+{{- define "body_override" -}}
+<body class="layout-list section-{{.Section}} alias-{{replace (.RelPermalink | strings.TrimLeft "/" | path.Clean) "/" "_" }} no-grid">
+{{- end -}}
+
+{{ define "main" }}
+	{{- .Content -}}
+	{{- .Scratch.Set "blogOrderPages" "Title" -}}
+	{{- partial "blog.html" . -}}
+{{ end }}

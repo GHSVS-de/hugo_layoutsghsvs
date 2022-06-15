@@ -10,7 +10,13 @@
 				<span class=visually-hidden>{{ i18n "BREADCRUMB:HERE" }}</span>
 			</li>
 		{{- end -}}
-		{{- $uniqueId := (.File.UniqueID | default (md5 "pumpasdasdasfallera")) -}}
+
+		{{- /* Wenn eine Kategorie z.B. keine _index.md hat, ist .File undef. */ -}}
+		{{- $uniqueId := (md5 .Permalink) -}}
+		{{- with .File -}}
+			{{$uniqueId = .File.UniqueID}}
+		{{- end -}}
+
 		{{- template "breadcrumb" dict "currentPage" .Page "id" $uniqueId "params" $params -}}
 	</ol>
 </nav>

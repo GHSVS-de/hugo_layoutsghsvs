@@ -1,0 +1,16 @@
+{{- $urls := .Params.urls -}}
+{{- if $urls -}}
+{{- $urlsHeading := .Params.urlsHeading | default (i18n "urlsHeading") | default "Links" -}}
+<div class="bd-callout bd-callout-info">
+	<h2 class="h6 text-info">{{ $urlsHeading }}</h2>
+	<nav class="nav flex-column">
+	{{- range $urls -}}
+		{{- $title := .title -}}
+		{{- if $title -}}
+			{{- $title = $title | $.Page.RenderString -}}
+		{{- end -}}
+	<a href="{{ .link }}" class="nav-link">{{ ($title | default .link) }}</a>
+	{{- end -}}
+	</nav>
+</div>
+{{- end -}}

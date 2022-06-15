@@ -1,0 +1,12 @@
+{{/*
+Beachte zu Tags und GetTerms und andere: KONFIGYML: disableKinds: Entferne
+"taxonomy" und "term"!
+*/}}
+{{- $tags := .GetTerms "tags" -}}
+{{- if $tags -}}
+	<ul>
+		{{- range $tags -}}
+			<li><a href="{{ .Permalink }}">{{ .LinkTitle }}</a></li>
+		{{- end -}}
+	</ul>
+{{- end -}}

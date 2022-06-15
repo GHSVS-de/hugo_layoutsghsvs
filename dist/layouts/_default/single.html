@@ -1,0 +1,9 @@
+{{- define "body_override" -}}
+<body class="layout-single section-{{.Section}} alias-{{replace (.RelPermalink | strings.TrimLeft "/" | path.Clean) "/" "_" }}">
+{{- end -}}
+
+{{ define "main" }}
+	{{ partial "urls.html" . }}
+	{{ .Content }}
+	{{ partial "tagsSingle.html" . }}
+{{- end -}}
