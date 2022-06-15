@@ -68,7 +68,9 @@ wird. Ich habe keine Ahnung, wie die Zudsammenhänge sind????
 		{{- partialCached "copyright.html" . -}}
 		{{- block "load_js" . }}{{ end -}}
   </body>
-	{{- partialCached "addHtaccess.html" . -}}
+	{{- if site.Params.enableHtaccess -}}
+		{{- partialCached "addHtaccess.html" . -}}
+	{{- end -}}
 </html>
 
 {{- define "extra_js" -}}

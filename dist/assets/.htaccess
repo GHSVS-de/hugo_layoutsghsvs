@@ -1,0 +1,5 @@
+AuthUserFile {{ .htpasswdpath }}/.htpasswd
+AuthGroupFile /dev/null
+AuthName 'bitte Zugangsdaten eingeben'
+AuthType Basic
+require valid-user
