@@ -1,0 +1,15 @@
+- short: Frage
+  icon: question-circle-fill
+  class: text-warning bg-white
+- short: Lösung
+  icon: lightbulb
+  class: text-success bg-white
+- short: Problem
+  icon: lightning
+  class: text-danger bg-white
+- short: Warnung
+  icon: exclamation-circle
+  class: text-danger bg-white
+- short: Achtung
+  icon: exclamation-circle
+  class: text-danger bg-white
