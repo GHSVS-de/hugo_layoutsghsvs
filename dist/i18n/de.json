@@ -1,0 +1,71 @@
+{
+	"page": {
+		"other": "Artikel"
+	},
+	"BLOG_HEADLINE_OF": {
+		"other": "Unterseiten von \"{{ . }}\""
+	},
+	"BREADCRUMB:HERE": {
+		"other": "Aktueller Seitenpfad:"
+	},
+	"CONTACT:TITLE": {
+		"other": "Kontakt"
+	},
+	"fileNotFound": {
+		"other": "Datei \"{{ . }}\" nicht gefunden."
+	},
+		"LOGO": {
+		"other": "Seitenlogo"
+	},
+	"NAVIGATION:TOP": {
+		"other": "Hauptmenü"
+	},
+	"READ_MORE": {
+		"other": "Weiterlesen"
+	},
+	"READ_MORE_TITLE": {
+		"other": "Gehe zur Seite: \"{{ . }}\"."
+	},
+	"headline_exkursGhsvs": {
+		"other": "Exkurs, Rätselraten, Verwirrungskompensation"
+	},
+	"pageNavigationFor": {
+		"other": "Menü für Bereich \"{{.}}\""
+	},
+	"PLG_SYSTEM_BS3GHSVS_CLOSE": {
+		"other": "Schließen"
+	},
+	"prevNextNavLabel": {
+		"other": "Navigation zu vorherigem oder nächstem Artikel in Kategorie"
+	},
+	"section": {
+		"other": "Kategorie"
+	},
+	"sections": {
+		"other": "Kategorien"
+	},
+	"sidemenuNotFound": {
+		"other": "Fehler. Fehlende Sidemenu-Konfiguration für \"{{ . }}\"."
+	},
+	"subSection": {
+		"other": "Unter-Kategorie"
+	},
+	"subSections": {
+		"other": "Unter-Kategorien"
+	},
+	"toggleSidebarNavigation": {
+		"other": "Sidebar-Navigation aufklappen/zuklappen."
+	},
+	"toggleTopNavigation": {
+		"other": "Hauptmenü aufklappen/zuklappen."
+	},
+	"TPL_BS4GHSVS_MODAL_BUTTON_SCROLL_TO": {
+		"other": "Scrolle zu..."
+	},
+	"urlsHeading": {
+		"other": "Links"
+	},
+	"wordCount": {
+		"other": "This article has {{ .WordCount }} words."
+	}
+}
