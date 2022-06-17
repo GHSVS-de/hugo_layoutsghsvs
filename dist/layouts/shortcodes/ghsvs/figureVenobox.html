@@ -5,11 +5,29 @@
 {{- $path := "" -}}
 {{- $src := replace (.Get "src") "\\" "/" -}}
 {{- $isAsis := or (eq $loc "asis") (findRE "^(https://|http://)" $src) -}}
+{{- $wh := "" -}}
+{{- $maxW := site.Params.imageResizeWidth | default "900" -}}
 
 {{- if and (not $isAsis) (isset $.Site.Params.imageSources $loc) -}}
 	{{- $src = trim $src "/" -}}
 	{{- $path = trim (index $.Site.Params.imageSources $loc) "/" -}}
 	{{- $src = print $path "/" $src -}}
+{{- end -}}
+
+{{- if (hasPrefix $src "https://") -}}
+	{{- $img := resources.GetRemote $src -}}
+
+	{{- if $img -}}
+		{{ $target := print "assets/images/" (path.Clean $src | strings.TrimPrefix "https:/") }}
+
+		{{- if gt $img.Width $maxW -}}
+			{{$img = $img.Resize (printf "%s%s" $maxW "x")}}
+		{{- end -}}
+
+		{{- $img = $img | resources.Copy $target -}}
+		{{- $src = $img.Permalink -}}
+		{{- $wh = (printf "width=%v height=%v" $img.Width $img.Height) | safeHTMLAttr -}}
+	{{- end -}}
 {{- end -}}
 
 {{- $caption := (.Get "caption") -}}
@@ -19,6 +37,7 @@
 	<figure class="autoLimited article_image item-image-in-article ghsvs_img-default figure4img{{- with .Get "class" }} {{ . }}{{ end -}}">
 		<a href="{{ $src | relURL }}" class="venobox" {{ with $dataTitle }} data-title="{{ . }}"{{ end }}>
 			<img src="{{ $src | relURL }}" alt="{{ .Get "alt" }}" loading="lazy"
+				{{- with $wh}} {{$wh}} {{end -}}
 				class="img-fluid img-thumbnail{{ with .Get "classImg" }} {{ . }}{{ end }}"/>
 		</a>
 		{{- if or $caption (.Get "href") -}}
