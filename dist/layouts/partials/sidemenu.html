@@ -32,11 +32,18 @@ Die URL verlängert sich bspw. um ein "/en/", wenn Content nicht in
 - Fallback: Get configuration of relevant sidemenu yml in folder data/sidemenu/.
 - Also bspw. data/sidemenu/my-hugo.yml.
 */}}
+
+{{- $sidemenuData := .Site.Data.sidemenu -}}
 {{- $sidemenu := print (.Page.Params.Sidemenu | default $chapterPart) -}}
-{{- $sidemenuData := index .Site.Data.sidemenu $sidemenu -}}
+
+{{- if $sidemenuData -}}
+	{{- $sidemenuData = index $sidemenuData $sidemenu -}}
+{{- else -}}
+	{{- $sidemenuData = false -}}
+{{- end -}}
 
 {{- if not $sidemenuData -}}
-{{- partial "sidemenuPages.html" . -}}
+	{{- partial "sidemenuPages.html" . -}}
 {{- else -}}
 
 <!--WORK IN PROGRESS!!!!!!! -->

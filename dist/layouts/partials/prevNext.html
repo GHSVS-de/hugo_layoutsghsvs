@@ -8,9 +8,14 @@ Ich weiß nicht, was nun weniger Pflegearbeit macht, wenn man eine sinnvolle Sor
 <!--####EXTRAKT-END docBlock-->
  */ -}}
 
-{{- $prevNext := index $.Site.Data.prevNext .Section -}}
-{{- if $prevNext -}}
-	{{$prevNext = index ($prevNext) ($.Page.RelPermalink)}}
+{{- $prevNextData := $.Site.Data.prevNext -}}
+{{- $prevNext := dict -}}
+
+{{- if $prevNextData -}}
+	{{- $prevNext = index $prevNextData .Section -}}
+	{{- if $prevNext -}}
+		{{$prevNext = index ($prevNext) ($.Page.RelPermalink)}}
+	{{- end -}}
 {{- end -}}
 
 {{- $options := .Scratch.Get "prevNext" -}}
