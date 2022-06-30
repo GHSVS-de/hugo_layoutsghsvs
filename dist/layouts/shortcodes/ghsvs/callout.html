@@ -1,7 +1,9 @@
 {{- /*
 - Usage: `callout "type"`[false], where `type` is one of info (default), danger, or warning.
-- @since Hugo 100.0 crasht dieses Shortcode, wenn ein < code/ghsvs > eigebettet ist.
+- @since Hugo 100.0 crasht dieses Shortcode, wenn ein < ghsvs/code > eigebettet ist.
   - deshalb wurde parameter markdownify eingeführt, der explizit auf false gesetzt sein muss, um $.Page.RenderString zu umschiffen.
+- @since Hugo 100.0 this shortcode crashes if a < ghsvs/code > is embedded.
+  - therefore parameter markdownify was introduced, which must be explicitly set to false to bypass $.Page.RenderString.
 */ -}}
 
 {{- $css_class := .Get 0 | default "info" -}}
