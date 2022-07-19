@@ -12,7 +12,7 @@
 {{- $collect = $collect | append $tmp -}}
 
 <!--Copyright Holder (name, company, whatever)-->
-{{- with ($copyright.title | default $contact.title | default site.Params.author) -}}
+{{- with ($copyright.title | default $contact.title | default site.Params.author.name) -}}
 	{{ $collect = $collect | append . }}
 {{- end -}}
 
