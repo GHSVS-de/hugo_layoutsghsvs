@@ -108,7 +108,7 @@ Die URL verlängert sich bspw. um ein "/en/", wenn Content nicht in
 										B\C replaceRE, da ich für automatisches weight setzen auch
 											"path: xy.md" verwenden wollte.
 										*/ -}}
-										{{- $childSlug = (replaceRE "\\..+$" "" $childSlug) | urlize -}}
+										{{- $childSlug = (replaceRE `\..+$` "" $childSlug) | urlize -}}
 
 										{{- $isActiveChild := and $isActiveMama (eq $pagePart $childSlug) -}}
 										{{- $href := print (printf "/%s/%s/%s/" $chapterPart $mamaSlug $childSlug | path.Clean) "/" -}}
