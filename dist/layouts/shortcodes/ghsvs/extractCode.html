@@ -14,7 +14,7 @@
 	{{- if $fileContent -}}
 		{{- $capture_start := printf "####EXTRAKT-START %s\n" $name -}}
 		{{- $capture_end := printf "####EXTRAKT-END %s" $name -}}
-		{{- $suffix := (findRE "(\\.[^.]+)$" $file 1) -}}
+		{{- $suffix := (findRE `(\.[^.]+)$` $file 1) -}}
 
 		{{- if $suffix -}}
 			{{- $suffix := (index $suffix 0) -}}

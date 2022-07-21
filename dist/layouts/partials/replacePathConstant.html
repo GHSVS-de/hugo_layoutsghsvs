@@ -12,7 +12,7 @@
 {{- $PATH := replace .PATH "\\" "/" -}}
 
 {{- if (hasPrefix $PATH "PATH_") -}}
-	{{- $CONST := index ( findRE "^(PATH_[A-Z]+)" $PATH 1 ) 0 -}}
+	{{- $CONST := index ( findRE `^(PATH_[A-Z]+)` $PATH 1 ) 0 -}}
 	{{- $PATH = replace $PATH $CONST "" -}}
 	{{- $PATH = path.Join ($PAGE.Page.Store.Get $CONST) $PATH -}}
 {{- end -}}

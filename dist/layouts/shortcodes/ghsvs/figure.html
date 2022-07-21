@@ -1,7 +1,7 @@
 {{- $loc := (.Get "loc" | default "local") -}}
 {{- $path := "" -}}
 {{- $src := replace (.Get "src") "\\" "/" -}}
-{{- $isAsis := or (eq $loc "asis") (findRE "^(https://|http://)" $src) -}}
+{{- $isAsis := or (eq $loc "asis") (findRE `^(https://|http://)` $src) -}}
 {{- if and (not $isAsis) (isset $.Site.Params.imageSources $loc) -}}
 	{{- $src = trim $src "/" -}}
 	{{- $path = trim (index $.Site.Params.imageSources $loc) "/" -}}

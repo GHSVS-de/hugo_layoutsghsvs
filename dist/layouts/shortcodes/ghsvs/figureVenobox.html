@@ -4,7 +4,7 @@
 {{- $loc := (.Get "loc" | default "local") -}}
 {{- $path := "" -}}
 {{- $src := replace (.Get "src") "\\" "/" -}}
-{{- $isAsis := or (eq $loc "asis") (findRE "^(https://|http://)" $src) -}}
+{{- $isAsis := or (eq $loc "asis") (findRE `^(https://|http://)` $src) -}}
 {{- $wh := "" -}}
 {{- $maxW := site.Params.imageResizeWidth | default "900" -}}
 

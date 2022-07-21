@@ -93,7 +93,7 @@ Concat optional CSS. Collected in .Scratch "SCRATCH_CSS" and LINK it.
 {{- define "extra_css" -}}
 	{{- range .Page.Params.extra_css -}}
 		{{- $file := . -}}
-		{{- $suffix := index (findRE "(\\.css)$" . 1) 0 -}}
+		{{- $suffix := index (findRE `(\.css)$` . 1) 0 -}}
 		{{- if not $suffix -}}
 			{{- $file = path.Join "/assets/css" $file -}}
 			{{ if eq hugo.Environment "production" -}}
