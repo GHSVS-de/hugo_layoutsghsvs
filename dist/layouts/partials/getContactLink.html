@@ -2,7 +2,6 @@
 {{- $contactLink := "" -}}
 
 {{- if .url -}}
-	{{- $contactLink = `<a class=contactLink href="%s" target=_blank>%s</a>` -}}
 	{{- $contactLink = printf `<a class=contactLink href="%s">%s</a>`
 		.url (.title | default (i18n "CONTACT:TITLE")) | safeHTML -}}
 {{- end -}}
