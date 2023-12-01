@@ -1,7 +1,7 @@
 # www.robotstxt.org
 
 ## Idee verworfen!
-# site.SitemapAbsURL: {{ site.SitemapAbsURL }}
+# site.SitemapAbsURL: {         { site.SitemapAbsURL }              }
 
 {{- $isProduction := eq hugo.Environment "production" -}}
 {{- $isNetlify := eq (getenv "NETLIFY") "true" -}}
