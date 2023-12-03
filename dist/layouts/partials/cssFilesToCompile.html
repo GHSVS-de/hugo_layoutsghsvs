@@ -1,8 +1,9 @@
 {{/*
+- partials/cssFilesToCompile.html
 - In KONFIGYML siehe params.scss.filesToCompile.
-- Ein Array mit Dateinamen ohne Endung im /assets/scss/.
+- Ein Array mit Dateinamen ohne Endung im SOURCEROOT/assets/scss/.
 - Diese werden einzeln SASS-kompiliert und gespeichert.
-- Ziel der CSS-Dateien PATH_PUBLIC/assets/css/.
+- Ziel der CSS-Dateien SITEROOT/assets/css/.
 - Aber noch nicht geladen! Das kann bspw. durch "extra_css" in frontMatter passieren.
 */}}
 {{- range .Site.Params.Scss.filesToCompile -}}
