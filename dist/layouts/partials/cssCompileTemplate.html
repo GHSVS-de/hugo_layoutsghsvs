@@ -1,4 +1,5 @@
 {{/*
+partials/cssCompileTemplate.html
 Hier verwende ich absichtlich eine mehrschrittige Variante und ohne die üblichen
 Pipes laut Hugo-Docs oder Bootstrap, da mehrere toCSS, eins mit "expanded",
 eins mit "compressed", durcheinander kommen und nicht alle Dateien erzeugt
@@ -9,7 +10,7 @@ Siehe ".Publish".
 {{- $postcssOptions := (dict "use" "autoprefixer" "noMap" true) -}}
 {{- $target := "/assets/css/template.css" -}}
 {{- $options := (dict "targetPath" $target "outputStyle" "expanded" "enableSourceMap" false "precision" 6) -}}
-{{- $sass := resources.Get "scss/template.scss" -}}
+{{- $sass := resources.Get "scss/bs53/template.scss" -}}
 {{- $file := $sass | toCSS $options  -}}
 {{- $file = $file | postCSS $postcssOptions -}}
 

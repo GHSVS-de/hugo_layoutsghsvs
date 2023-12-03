@@ -5,7 +5,7 @@
 {{/*
 Hab das nur mittels Match geschafft, damit ich unten append machen kann.
 */}}
-{{- $bootstrap := resources.Match "js/bootstrap/bootstrap.bundle.min.js" -}}
+{{- $bootstrap := resources.Match "js/bootstrap/bs53/bootstrap.bundle.min.js" -}}
 {{- $vendor := resources.Match "js/vendor/*.js" -}}
 {{- $js := resources.Match "js/*.js" -}}
 {{- $loadAfter := resources.Match "js/loadafter/*.js" -}}
